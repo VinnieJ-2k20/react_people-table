@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, useEffect, useState } from 'react';
 
 import '@fortawesome/fontawesome-free/css/all.css';
 import 'bulma/css/bulma.css';
@@ -6,35 +6,34 @@ import './App.scss';
 
 import { Loader } from './components/Loader';
 import { PeopleTable } from './components/PeopleTable';
+import { PeopleTableHooks } from './components/PeopleTableHooks';
 
-type State = {
-  loaded: boolean;
+export const App: FC = () => {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(
+    () => {
+      const timeoutId = setTimeout(() => {
+        setLoaded(true);
+      }, 2000);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    },
+    [],
+  );
+
+  return (
+    <div className="box">
+      <h1 className="title">People table</h1>
+
+      {loaded ? (
+        // <PeopleTable />
+        <PeopleTableHooks />
+      ) : (
+        <Loader />
+      )}
+    </div>
+  );
 };
-
-export class App extends React.Component<{}, State> {
-  state: Readonly<State> = {
-    loaded: false,
-  };
-
-  componentDidMount() {
-    setTimeout(() => {
-      this.setState({ loaded: true });
-    }, 500);
-  }
-
-  render() {
-    const { loaded } = this.state;
-
-    return (
-      <div className="box">
-        <h1 className="title">People table</h1>
-
-        {loaded ? (
-          <PeopleTable />
-        ) : (
-          <Loader />
-        )}
-      </div>
-    );
-  }
-}
